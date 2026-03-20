@@ -1,0 +1,23 @@
+require "atmos"
+val x = require "atmos.x"
+require "atmos.env.pico"
+val pico = require "pico"
+
+pico.zet.window(@{
+    title="Menu screen",
+    dim=@{'!', w=448, h=512}
+})
+pico.zet.view(@{
+    grid=false,
+    dim=@{'!', w=224, h=256}
+})
+pico.zet.font('./res/font.ttf', 8)
+
+spawn {
+    val pt = @{'!', x=256/2, y=220, h=8}
+    every :draw {
+        pico.output.draw.text("HELLO", pt)
+    }
+}
+
+await(:key.dn, :Escape)
