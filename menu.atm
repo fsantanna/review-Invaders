@@ -22,55 +22,59 @@ spawn {
     }
 }
 
-val typewrite = func (text, pt) {
-    var i = 1
+val func Typewrite(text, pt) {
+    var sub = "."
 
-    par_or {
+    spawn {
         every :draw  {
-            val sub = string.sub(text, 1, i)
             pico.output.draw.text(sub, pt)
         }
-    } with {
-        loop {
-            until(i > #text)
-            await @.100
-            set i = i + 1
-        }
+    } 
+
+    loop i in #text {
+        until(i > #text)
+        await @.100
+        set sub = string.sub(text, 1, i)
     }
 }
 
+val func ShowLine(text, pt) {
+    every :draw {
+        pico.output.draw.text(text, pt)
+    }
+}
+
+val func getPos(text, xrel, yrel) {
+    val dim = pico.get.text(text, @{"%", h=0.03})
+    val pos = pico.cv.pos(@{"%", x=xrel, y=yrel})
+    return @{"!", x=pos.x-(dim.w/2), y=pos.y, h=dim.h, anchor="W"}
+}
+
+
 val tx1 = "PLAY"
-val pt1 = @{"!", x=96, y=64, h=8, anchor="NW"}
+val pt1 = getPos(tx1, 0.5, 0.25)
 val tx2 = "SPACE INVADERS"
-val pt2 = @{"!", x=56, y=88, h=8, anchor="NW"}
+val pt2 = getPos(tx2, 0.5, 0.35)
 val tx3 = "*SCORE ADVANCES TABLE*"
-val pt3 = @{"!", x=24, y=120, h=8, anchor="NW"}
+val pt3 = getPos(tx3, 0.5, 0.50)
 val txa = "=? MYSTERY"
-val pta = @{"!", x=80, y=136, h=8, anchor="NW"}
+val pta = getPos(txa, 0.5, 0.60)
 val txb = "=30 POINTS"
-val ptb = @{"!", x=80, y=152, h=8, anchor="NW"}
+val ptb = getPos(txb, 0.5, 0.65)
 val txc = "=20 POINTS"
-val ptc = @{"!", x=80, y=168, h=8, anchor="NW"}
+val ptc = getPos(txc, 0.5, 0.70)
 val txd = "=10 POINTS"
-val ptd = @{"!", x=80, y=184, h=8, anchor="NW"}
+val ptd = getPos(txd, 0.5, 0.75)
 
 
 await @1
 
 watching :key.dn, :Escape {
-    typewrite(tx1, pt1)
-    spawn {
-        every :draw {
-            pico.output.draw.text(tx1, pt1)
-        }
-    }
+    await Typewrite(tx1, pt1)
+    spawn ShowLine(tx1, pt1)
 
-    typewrite(tx2, pt2)
-    spawn {
-        every :draw {
-            pico.output.draw.text(tx2, pt2)
-        }
-    }
+    await Typewrite(tx2, pt2)
+    spawn ShowLine(tx2, pt2)
 
     await @1
 
@@ -81,33 +85,17 @@ watching :key.dn, :Escape {
         }
     }
 
-    typewrite(txa, pta)
-    spawn {
-        every :draw {
-            pico.output.draw.text(txa, pta)
-        }
-    }
+    await Typewrite(txa, pta)
+    spawn ShowLine(txa, pta)
 
-    typewrite(txb, ptb)
-    spawn {
-        every :draw {
-            pico.output.draw.text(txb, ptb)
-        }
-    }
+    await Typewrite(txb, ptb)
+    spawn ShowLine(txb, ptb)
 
-    typewrite(txc, ptc)
-    spawn {
-        every :draw {
-            pico.output.draw.text(txc, ptc)
-        }
-    }
+    await Typewrite(txc, ptc)
+    spawn ShowLine(txc, ptc)
 
-    typewrite(txd, ptd)
-    spawn {
-        every :draw {
-            pico.output.draw.text(txd, ptd)
-        }
-    }
+    await Typewrite(txd, ptd)
+    spawn ShowLine(txd, ptd)
 }
 
 watching :key.dn, :Escape {
@@ -122,6 +110,3 @@ watching :key.dn, :Escape {
     }
 }
 
-print("done")
-
-;; vai mostrando os textos
