@@ -3,21 +3,165 @@ val x = require "atmos.x"
 require "atmos.env.pico"
 val pico = require "pico"
 
-pico.zet.window(@{
-    title="Menu screen",
-    dim=@{'!', w=448, h=512}
-})
-pico.zet.view(@{
-    grid=false,
-    dim=@{'!', w=224, h=256}
-})
 pico.zet.font('./res/font.ttf', 8)
+pico.zet(@{
+    window = @{
+        title="Menu screen",
+        dim=@{'!', w=448, h=512}
+    },
+
+    view = @{
+        grid=false,
+        dim=@{'!', w=224, h=256}
+    }
+})
 
 spawn {
-    val pt = @{'!', x=256/2, y=220, h=8}
     every :draw {
-        pico.output.draw.text("HELLO", pt)
+        ;; draw score counters. they never disappear
     }
 }
 
-await(:key.dn, :Escape)
+await @1 
+
+watching :key.dn, :Escape  {
+    ;; typewrite first line
+    var i = 1
+    val tx1 = "PLAY"
+    val pt1 = @{"!", x=96, y=64, h=8, anchor="NW"}
+    par_or {
+        every :draw  {
+            val sub = string.sub(tx1, 1, i)
+            pico.output.draw.text(sub, pt1)
+        }
+    } with {
+        loop {
+            until(i > #tx1)
+            await @.100
+            set i = i + 1
+        }
+    }
+
+    ;; typewrite second line, keeping previous one
+    set i = 1
+    val tx2 = "SPACE INVADERS"
+    val pt2 = @{"!", x=56, y=88, h=8, anchor="NW"}
+    par_or {
+        every :draw  {
+            pico.output.draw.text(tx1, pt1)
+            val sub = string.sub(tx2, 1, i)
+            pico.output.draw.text(sub, pt2)
+        }
+    } with {
+        loop {
+            until(i > #tx2)
+            await @.100
+            set i = i + 1
+        }
+    }
+
+    ;; from now on, draw the two lines always
+    spawn {
+        every :draw {
+            pico.output.draw.text(tx1, pt1)
+            pico.output.draw.text(tx2, pt2)
+        }
+    }
+
+    await @1
+
+    ;; now draw third line
+    set i = 1
+    val tx3 = "*SCORE ADVANCES TABLE*"
+    val pt3 = @{"!", x=24, y=120, h=8, anchor="NW"}
+    spawn {
+        every :draw {
+            pico.output.draw.text(tx3, pt3)
+        }
+    }
+
+    set i = 1
+    val txa = "=? MYSTERY"
+    val pta = @{"!", x=80, y=136, h=8, anchor="NW"}
+    par_or {
+        every :draw  {
+            val sub = string.sub(txa, 1, i)
+            pico.output.draw.text(sub, pta)
+        }
+    } with {
+        loop {
+            until(i > #txa)
+            await @.100
+            set i = i + 1
+        }
+    }
+
+    set i = 1
+    val txb = "=30 POINTS"
+    val ptb = @{"!", x=80, y=152, h=8, anchor="NW"}
+    par_or {
+        every :draw  {
+            val sub = string.sub(txb, 1, i)
+            pico.output.draw.text(sub, ptb)
+            pico.output.draw.text(txa, pta)
+        }
+    } with {
+        loop {
+            until(i > #txb)
+            await @.100
+            set i = i + 1
+        }
+    }
+
+    set i = 1
+    val txc = "=20 POINTS"
+    val ptc = @{"!", x=80, y=168, h=8, anchor="NW"}
+    par_or {
+        every :draw  {
+            val sub = string.sub(txc, 1, i)
+            pico.output.draw.text(sub, ptc)
+            pico.output.draw.text(txb, ptb)
+            pico.output.draw.text(txa, pta)
+        }
+    } with {
+        loop {
+            until(i > #txc)
+            await @.100
+            set i = i + 1
+        }
+    }
+
+    set i = 1
+    val txd = "=10 POINTS"
+    val ptd = @{"!", x=80, y=184, h=8, anchor="NW"}
+    par_or {
+        every :draw  {
+            val sub = string.sub(txd, 1, i)
+            pico.output.draw.text(sub, ptd)
+            pico.output.draw.text(txc, ptc)
+            pico.output.draw.text(txb, ptb)
+            pico.output.draw.text(txa, pta)
+        }
+    } with {
+        loop {
+            until(i > #txd)
+            await @.100
+            set i = i + 1
+        }
+    }
+
+    spawn {
+        every :draw  {
+            pico.output.draw.text(txd, ptd)
+            pico.output.draw.text(txc, ptc)
+            pico.output.draw.text(txb, ptb)
+            pico.output.draw.text(txa, pta)
+        }
+    }
+
+    await @10
+}
+
+print("done")
+
+;; vai mostrando os textos
