@@ -22,7 +22,7 @@ spawn {
     }
 }
 
-val func Typewrite(text, pt) {
+val func Typewrite (text, pt) {
     var sub = "."
 
     spawn {
@@ -36,12 +36,9 @@ val func Typewrite(text, pt) {
         await @.100
         set sub = string.sub(text, 1, i)
     }
-}
 
-val func ShowLine(text, pt) {
-    every :draw {
-        pico.output.draw.text(text, pt)
-    }
+    emit [1] :ok
+    await(false)
 }
 
 val func getPos(text, xrel, yrel) {
@@ -66,15 +63,14 @@ val ptc = getPos(txc, 0.5, 0.70)
 val txd = "=10 POINTS"
 val ptd = getPos(txd, 0.5, 0.75)
 
-
 await @1
 
 watching :key.dn, :Escape {
-    await Typewrite(tx1, pt1)
-    spawn ShowLine(tx1, pt1)
+    spawn Typewrite(tx1, pt1)
+    await :ok
 
-    await Typewrite(tx2, pt2)
-    spawn ShowLine(tx2, pt2)
+    spawn Typewrite(tx2, pt2)
+    await :ok
 
     await @1
 
@@ -85,17 +81,17 @@ watching :key.dn, :Escape {
         }
     }
 
-    await Typewrite(txa, pta)
-    spawn ShowLine(txa, pta)
+    spawn Typewrite(txa, pta)
+    await :ok
 
-    await Typewrite(txb, ptb)
-    spawn ShowLine(txb, ptb)
+    spawn Typewrite(txb, ptb)
+    await :ok
 
-    await Typewrite(txc, ptc)
-    spawn ShowLine(txc, ptc)
+    spawn Typewrite(txc, ptc)
+    await :ok
 
-    await Typewrite(txd, ptd)
-    spawn ShowLine(txd, ptd)
+    spawn Typewrite(txd, ptd)
+    await :ok
 }
 
 watching :key.dn, :Escape {
